@@ -31,8 +31,8 @@ function create_amiga_SDK_package
     SDK_DIRS=(
 	"local/${C_LIB}/bin"
 	"local/${C_LIB}/lib"
-	"local/${C_LIB}/share/libxml2/man"
-	"local/${C_LIB}/share/libxml2/doc"
+	"local/${C_LIB}/share/libxslt/man"
+	"local/${C_LIB}/share/libxslt/doc"
 	"local/common/include"
     )
 

@@ -1,5 +1,11 @@
 #!/bin/bash --
 
+function _error
+{
+	echo 1>&2 "${1}"
+	exit ${2}
+}
+
 C_LIB=clib2
 if (( ${#} > 0 ))
 then
@@ -8,24 +14,16 @@ then
 	C_LIB=newlib
     elif [[ "${1}" != "clib=clib2" ]]
     then
-	echo "Could not understand argument ${1}. Only clib=<newlib|clib2[default]> is understood" 1>&2
-	exit 1
+	_error "Could not understand argument ${1}. Only clib=<newlib|clib2[default]> is understood" 1
     fi
 fi
 INSTALL_PREFIX="$(pwd)/installAmiga_${C_LIB}"
 
-function _error
-{
-	echo 1>&2 "${1}"
-	exit ${2}
-}
-
-which ppc-amigaos-gcc 1>/dev/null 2>&1 || _error "Expected ppc-amigaos cross compiler on the path" 10
+which ppc-amigaos-gcc 1>/dev/null 2>&1 || _error "Expected ppc-amigaos cross compiler on the path" 2
 
 if [[ ! -d /sdk/ ]]
 then
-    echo "Error, you do not have a symbolic link named /sdk/ pointing to your ADTOOLS installation SDK" 2>&1
-    exit 3
+    _error "Error, you do not have a symbolic link named /sdk/ pointing to your ADTOOLS installation SDK" 3
 fi
 
 function create_amiga_SDK_package
@@ -67,9 +65,9 @@ fi
     
 if (( !${?} ))
 then
-    { make -j$(nproc) && make install ; } || { echo "Error with make" 2>&1 ; exit 1 ; }
+    { make -j$(nproc) && make install ; } || _error "Error with make" 4
     create_amiga_SDK_package
     echo "FINISHED. See libxslt_1_1_37.lha"
 else
-    echo "Error with configure" 2>&1 ; exit 2
+    _error "Error with configure" 5
 fi
